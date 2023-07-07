@@ -1,20 +1,19 @@
 'use client';
-
 import { BiShow } from 'react-icons/bi';
 
 import ButtonDefault from '@/components/Buttons/ButtonDefault';
 
 import { useTabsStore } from '@/store/tabs';
-import { ContainerDefault } from '@/styles/styles';
+import { ContainerDefault, HeaderPage } from '@/styles/styles';
 import { usePathname, useRouter } from 'next/navigation';
 
 interface ProductsProps {
   params: {
-    id: string;
+    slug: string;
   };
 }
 
-export default function DashboardId({ params }: ProductsProps) {
+export default function ServiceId({ params }: ProductsProps) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -23,15 +22,15 @@ export default function DashboardId({ params }: ProductsProps) {
     actions: { updateTab }
   } = useTabsStore();
 
-  function handleOnNavigate(id: number) {
+  function handleOnNavigate(item: string) {
     const tab = tabs
       .filter((obj) => obj.to === pathname)
       .map((row) =>
-        row.to === pathname ? { ...row, to: `/dashboard/${params.id}/reviews` } : row
+        row.to === pathname ? { ...row, to: `/service/${params.slug}/${item}` } : row
       )[0];
 
     updateTab(tab.id, tab);
-    router.push(`/dashboard/${params.id}/reviews`);
+    router.push(`/service/${params.slug}/${item}`);
   }
 
   const dataTable = [
@@ -71,7 +70,11 @@ export default function DashboardId({ params }: ProductsProps) {
 
   return (
     <ContainerDefault>
-      <h1>Reviews</h1>
+      <HeaderPage>
+        <div className="titleHeaderPage">
+          <h2>Listagem</h2>
+        </div>
+      </HeaderPage>
 
       <table>
         <thead>
@@ -92,7 +95,10 @@ export default function DashboardId({ params }: ProductsProps) {
               <td>{transaction.category}</td>
               <td>{transaction.createdAt}</td>
               <td className="buttonsActions">
-                <ButtonDefault typeButton="dark" onClick={() => handleOnNavigate(transaction.id)}>
+                <ButtonDefault
+                  typeButton="dark"
+                  onClick={() => handleOnNavigate(transaction.title)}
+                >
                   <BiShow />
                 </ButtonDefault>
               </td>
@@ -100,7 +106,6 @@ export default function DashboardId({ params }: ProductsProps) {
           ))}
         </tbody>
       </table>
-      {/* <ButtonDefault onClick={handleOnNavigate}>item_{params.id}</ButtonDefault> */}
     </ContainerDefault>
   );
 }

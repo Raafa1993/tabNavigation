@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BiCoffee, BiUser, BiJoystick, BiHive } from 'react-icons/bi';
 
 import ButtonDefault from '@/components/Buttons/ButtonDefault';
@@ -9,8 +9,8 @@ import Sidebar from '@/components/layout/Sidebar';
 import { useTabsStore } from '@/store/tabs';
 import { GlobalStyles } from '@/styles/global';
 import { Inter } from 'next/font/google';
-import { usePathname, useRouter } from 'next/navigation';
-import { v4 as uuidv4, v5 as uuidv5 } from 'uuid';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { v4 as uuidv4 } from 'uuid';
 
 import StyledJsxRegistry from './registry';
 import { Container, Main } from './styles';
@@ -31,7 +31,9 @@ interface ItemsProps {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
+  const params = useSearchParams();
   const v4Id = uuidv4();
 
   const {
@@ -39,13 +41,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     actions: { addTabs }
   } = useTabsStore();
 
-  function handleOnClick(name: string) {
-    console.log('Clicou', name);
+  function hasPath(name: string) {
+    const nameLenght = name.length;
+    const newPath = pathname.substring(0, nameLenght);
+    // console.log('newPath', newPath);
+    return newPath;
+  }
 
+  function handleOnClick(name: string) {
     addTabs({
       id: v4Id,
-      name,
-      title: name,
+      name: name + '/' + String(tabs.length + 1),
+      title: name + '_' + String(tabs.length + 1),
       to: name + '/' + String(tabs.length + 1)
     });
 
@@ -61,7 +68,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
     router.push(`${name}` + '/' + String(tabs.length + 1));
   }
-  console.log('ITEMS', tabs);
+
+  // useEffect(() => {
+  //   const url = `${pathname}`;
+  //   console.log('URL', url);
+  //   // You can now use the current URL
+  //   // ...
+  // }, [pathname, searchParams]);
+  console.log('TABS', tabs);
+  // console.log('PARMAS', params.has('name'));
+  // console.log('HAS-PATH', hasPath(name + '/' + String(tabs.length + 1)));
+
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -73,13 +90,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 handleOnClick={handleOnClick}
                 path={pathname}
                 menus={[
+                  // {
+                  //   to: '/dashboard',
+                  //   name: 'Dashboard',
+                  //   icon: BiCoffee
+                  // },
                   {
-                    to: '/dashboard',
-                    name: 'Dashboard',
-                    icon: BiCoffee
-                  },
-                  {
-                    to: '/servicos',
+                    to: '/service',
                     name: 'Serviços',
                     icon: BiUser
                   },
@@ -107,11 +124,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <div className="sidebarItems">
                   {tabs.map((row) => (
                     <ButtonDefault
-                      typeButton={pathname === row.to ? 'primary' : 'light'}
+                      typeButton={hasPath(row.name) === row.name ? 'primary' : 'light'}
                       onClick={() => router.push(row.to)}
                       key={row.id}
                     >
-                      {row.title + '_' + row.to.charAt(row.to.length - 1)}
+                      {row.title}
                     </ButtonDefault>
                   ))}
                 </div>

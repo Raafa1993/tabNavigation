@@ -12,8 +12,6 @@ export default function SubMenu({ data }: any) {
   const pathname = usePathname();
   const [subMenuOpen, setSubMenuOpen] = useState(false);
 
-  console.log(data);
-
   return (
     <>
       <ListSub onClick={() => setSubMenuOpen(!subMenuOpen)}>

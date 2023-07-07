@@ -25,7 +25,8 @@ export default function Header() {
     <Container>
       <SectionProfile>
         <Logo>
-          <Image src={LogoIcon} alt="Logo aplicação" />
+          {/* <Image src={LogoIcon} alt="Logo aplicação" /> */}
+          LOGO
         </Logo>
 
         <Profile onClick={() => setMenuUser(!menuUser)}>

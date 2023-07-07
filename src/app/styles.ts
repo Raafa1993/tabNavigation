@@ -24,6 +24,7 @@ export const Main = styled.div`
       align-items: center;
       gap: 1rem;
       padding: 8px 1rem;
+      border-bottom: 1px solid var(--gray-200);
     }
   }
 `;
